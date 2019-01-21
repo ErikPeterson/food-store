@@ -1,5 +1,6 @@
 require 'rails_helper'
 require './spec/support/jwt_helper'
+require './spec/support/database_cleaner.rb'
 
 RSpec.configure do |config|
   config.include JWTHelper

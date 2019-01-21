@@ -1,4 +1,5 @@
 require 'rails_helper'
+require './spec/support/database_cleaner.rb'
 
 RSpec.describe 'POST /signup', type: :request do
   def json
