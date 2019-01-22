@@ -1,10 +1,8 @@
 require 'rails_helper'
 require './spec/support/jwt_helper'
-require './spec/support/database_cleaner.rb'
+require './spec/support/database_cleaner'
 
-RSpec.configure do |config|
-  config.include JWTHelper
-end
+RSpec.configure{ |config| config.include JWTHelper }
 
 RSpec.describe 'POST /login', type: :request do
   let(:user) { create(:user) }

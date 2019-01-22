@@ -1,11 +1,10 @@
 require 'rails_helper'
-require './spec/support/database_cleaner.rb'
+require './spec/support/database_cleaner'
+require './spec/support/request_helper'
+
+RSpec.configure{ |config| config.include RequestHelper }
 
 RSpec.describe 'POST /signup', type: :request do
-  def json
-    JSON.parse(response.body).with_indifferent_access
-  end
-
   let(:url) { '/signup' }
   let(:params) do
     {
@@ -25,7 +24,7 @@ RSpec.describe 'POST /signup', type: :request do
 
     it 'returns a new user' do
       [:id, :email, :created_at, :updated_at].each do |key|
-        expect(json[key]).to be_present
+        expect(response_json[key]).to be_present
       end
     end
   end
@@ -41,7 +40,7 @@ RSpec.describe 'POST /signup', type: :request do
     end
 
     it 'returns validation errors' do
-      expect(json['errors'].first['title']).to eq('Bad Request')
+      expect(response_json['errors'].first['title']).to eq('Bad Request')
     end
   end
 end
