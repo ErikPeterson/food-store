@@ -1,6 +1,8 @@
 class StockUnitTypeSchemaValidator
   VALIDATORS = {
-
+    'ListType'  => ListType,
+    'TextType'  => TextType,
+    'RangeType' => RangeType
   }.freeze
 
   class << self
