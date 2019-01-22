@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  # root_to to: 'home#index'
   devise_for :users,
              path: '/',
              path_names: {
@@ -10,5 +9,11 @@ Rails.application.routes.draw do
                sessions: 'sessions',
                registrations: 'registrations'
              }
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  scope :api do
+    scope :v1 do
+      post '/stock_units' => 'stock_units#create'
+    end
+  end
+
 end
