@@ -37,7 +37,28 @@ RSpec.describe StockUnitAttributeValidator do
         StandardError,
         /is not a valid value for attribute/
       )
+    end
 
+    it 'raises an error if any attribute is not in the schema' do
+      schema = [
+        ['flavor notes', 'TextType', 100],
+        ['score', 'RangeType', 0, 10],
+        ['blend', 'ListType', 'Ethiopian', 'Ugandan']
+      ]
+
+      attributes = {
+        'flavor notes' => 'What a tasty coffee',
+        'score' => 8,
+        'blend' => 'Ethiopian',
+        'hey' => 'now'
+      }
+
+      expect{
+        StockUnitAttributeValidator.validate!(schema, attributes)
+      }.to raise_error(
+        StandardError,
+        /hey is not a valid attribute for this type/
+      )
     end
   end
 end
