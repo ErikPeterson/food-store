@@ -1,4 +1,4 @@
-class StockUnitTypesController < ActionController::API
+class StockUnitTypesController < ApplicationController
   before_action :authenticate_user!
 
   def create
@@ -13,6 +13,20 @@ class StockUnitTypesController < ActionController::API
     render "stock_unit_types/show.json", locals: { stock_unit_type: stock_unit_type }
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: e.message }, status: 404
+  end
+
+  def index
+    sort, page, per_page = validate_pagination_params!
+    stock_unit_types = StockUnitType.all
+      .order(created_at: sort).paginate(per_page: per_page, page: page)
+    render "stock_unit_types/index.json", locals: {
+      page: page,
+      per_page: per_page,
+      sort: sort,
+      stock_unit_types: stock_unit_types
+    }
+  rescue StandardError => e
+    render json: { error: e.message }, status: 400
   end
 
   private
