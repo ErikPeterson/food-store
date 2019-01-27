@@ -1,1 +1,3 @@
-json.stock_unit(stock_unit, :id, :owner_id, :description, :expiration_date, :created_at, :unit_attributes, :stock_unit_type_name, :schema)
+json.stock_unit do
+  json.partial! 'stock_units/stock_unit', stock_unit: stock_unit
+end

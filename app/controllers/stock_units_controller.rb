@@ -1,6 +1,15 @@
 class StockUnitsController < ActionController::API
   before_action :authenticate_user!
 
+  def index
+    sort, page, per_page = validate_pagination_params!
+    stock_units = StockUnit.where(owner_id: current_user.id)
+      .order(created_at: sort).paginate(per_page: per_page, page: page)
+    render "stock_units/index.json", locals: { page: page, per_page: per_page, sort: sort, stock_units: stock_units }
+  rescue StandardError => e
+    render json: { error: e.message }, status: 400
+  end
+
   def create
     stock_unit = StockUnit.new(stock_unit_params)
     stock_unit.owner ||= current_user
@@ -45,6 +54,8 @@ class StockUnitsController < ActionController::API
     render json: { error: e.message }, status: 400
   end
 
+  private
+
   def stock_unit_params
     params.require(:stock_unit).permit(
       :owner_id,
@@ -55,5 +66,24 @@ class StockUnitsController < ActionController::API
       :stock_unit_type_id,
       :unit_attributes => {}
     )
+  end
+
+  def validate_pagination_params!
+    sort = params[:sort] || 'desc'
+    if !['asc', 'desc'].include?(sort)
+      raise "#{sort} is not a valid value for `sort'"
+    end
+
+    page = params[:page] ? params[:page].to_i : 1
+    if page < 1
+      raise "#{page} is not a valid value for `page'"
+    end
+
+    per_page = params[:per_page] ? params[:per_page].to_i : 10
+    if per_page < 1
+      raise "#{per_page} is not a valid value for `page'"
+    end
+
+    [sort, page, per_page]
   end
 end

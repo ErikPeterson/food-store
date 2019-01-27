@@ -209,3 +209,104 @@ RSpec.describe 'DELETE /api/v1/stock_units/#{stock_unit.id}', type: :request do
     expect(response.status).to eq(204)
   end
 end
+
+RSpec.describe 'GET /api/v1/stock_units', type: :request do
+  it 'returns a 401 if no user is authenticated' do
+    get('/api/v1/stock_units')
+    expect(response.status).to eq(401)
+  end
+
+  context 'pagination' do
+    def setup_resources(n=10)
+      user = create(:user)
+      stock_units = create_list(:stock_unit, n, owner: user)
+      [user, stock_units]
+    end
+
+    context 'sort' do
+      it "orders by created_at descending by default" do
+        user, stock_units = setup_resources
+
+        get_with_authorization(user, '/api/v1/stock_units')
+
+        expect(
+          response_json[:stock_units].collect{ |j| j[:id] }
+        ).to eq(
+          StockUnit.where(owner: user).order(created_at: :desc).limit(10).pluck(:id)
+        )
+      end
+
+      it "orders by created_at ascending is sort is set to 'asc'" do
+        user, stock_units = setup_resources
+
+        get_with_authorization(user, '/api/v1/stock_units?sort=asc')
+
+        expect(
+          response_json[:stock_units].collect{ |j| j[:id] }
+        ).to eq(
+          StockUnit.where(owner: user).order(created_at: :asc).limit(10).pluck(:id)
+        )
+      end
+
+      it "responds with 400 if sort is set to a value other than desc or asc" do
+        user = create(:user)
+
+        get_with_authorization(user, '/api/v1/stock_units?sort=butt')
+
+        expect(response.status).to eq(400)
+      end
+    end
+
+    context 'page' do
+      it "defaults to 1" do
+        user, stock_units = setup_resources(11)
+
+        get_with_authorization(user, '/api/v1/stock_units?page=1')
+
+        expect(
+          response_json[:stock_units].collect{ |j| j[:id] }
+        ).to eq(
+          StockUnit.where(owner: user).order(created_at: :desc).limit(10).pluck(:id)
+        )
+      end
+
+      it "responds with an empty set if the page is out of bounds" do
+        user, stock_units = setup_resources
+
+        get_with_authorization(user, '/api/v1/stock_units?page=2')
+
+        expect(response_json[:stock_units]).to eq([])
+      end
+
+      it "responds with the indicated page of resources" do
+        user, stock_units = setup_resources(11)
+
+        get_with_authorization(user, '/api/v1/stock_units?sort=desc&page=2')
+
+        expect(
+          response_json[:stock_units][0][:id]
+        ).to eq(
+          StockUnit.where(owner: user).order(created_at: :desc).last.id
+        )
+      end
+    end
+
+    context 'per_page' do
+      it "defaults to 10" do
+        user, stock_units = setup_resources
+
+        get_with_authorization(user, '/api/v1/stock_units')
+
+        expect(response_json[:stock_units].count).to eq(10)
+      end
+
+      it "can be set to any positive number" do
+        user, stock_units = setup_resources(25)
+
+        get_with_authorization(user, '/api/v1/stock_units?per_page=25')
+
+        expect(response_json[:stock_units].count).to eq(25)
+      end
+    end
+  end
+end
