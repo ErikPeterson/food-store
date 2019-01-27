@@ -2,7 +2,7 @@
 
 ## Installation
 
-You will need to have PostgreSQL > 9, and Ruby at 2.5.0 installed. Postgres installation is very platform specific, so I won't give instructions here. However, I will reccomend the use of (RVM)[https://rvm.io] to install Ruby and manage gemsets.
+You will need to have PostgreSQL > 9, and Ruby at 2.5.0 installed. Postgres installation is very platform specific, so I won't give instructions here. However, I will reccomend the use of [RVM](https://rvm.io) to install Ruby and manage gemsets.
 
 If you don't already have bundler installed, install with `gem install bundler`.
 
@@ -108,7 +108,7 @@ Users are very basic records, containing only an `id`, `email`, and an encrypted
 
 ### Assumptions
 
--`StockUnitType` should be an ownerless record that can be created, but not updated or deleted through the API, so that all users of the system can create and use any types. Because of this the `name` attribute of `StockUnitType` records must be unique.
+- `StockUnitType` should be an ownerless record that can be created, but not updated or deleted through the API, so that all users of the system can create and use any types. Because of this the `name` attribute of `StockUnitType` records must be unique.
 
 - Arbitrary attributes should not be allowed on `StockUnit` records, so all keys in the `unit_attributes` attribute must be present in the schema of the relevant type.
 
