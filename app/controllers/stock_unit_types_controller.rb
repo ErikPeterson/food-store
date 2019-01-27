@@ -8,6 +8,13 @@ class StockUnitTypesController < ActionController::API
     render json: { error: e.message }, status: 400
   end
 
+  def get
+    stock_unit_type = StockUnitType.find(params[:id])
+    render "stock_unit_types/show.json", locals: { stock_unit_type: stock_unit_type }
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: e.message }, status: 404
+  end
+
   private
 
   def stock_unit_type_params

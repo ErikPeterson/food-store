@@ -52,3 +52,27 @@ RSpec.describe 'POST /api/v1/stock_unit_types', type: :request do
     expect(response_json).to match(expected_json(StockUnitType.last))
   end
 end
+
+RSpec.describe 'GET /api/v1/stock_unit_types/:id', type: :request do
+  it 'responds with a 401 if no user is authenticated' do
+    get '/api/v1/stock_unit_types/1'
+    expect(response.status).to eq(401)
+  end
+
+  it 'responds with the resource if the user is authenticated' do
+    user = create(:user)
+    sut = create(:stock_unit_type)
+
+    get_with_authorization(user, "/api/v1/stock_unit_types/#{sut.id}")
+
+    expect(response_json).to match(expected_json(sut))
+  end
+
+  it 'responds with a 404 if the resource does not exist' do
+    user = create(:user)
+
+    get_with_authorization(user, "/api/v1/stock_unit_types/1")
+
+    expect(response.status).to eq(404)
+  end
+end
