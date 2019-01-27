@@ -5,5 +5,6 @@ FactoryBot.define do
     description { "MyText" }
     mass_in_grams { 1 }
     expiration_date { "2019-01-21" }
+    unit_attributes { {} }
   end
 end

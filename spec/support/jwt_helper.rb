@@ -10,10 +10,17 @@ module JWTHelper
     Devise::JWT::TestHelpers.auth_headers({}, user)
   end
 
-  def post_with_authorization(user, path, config)
+  def post_with_authorization(user, path, config={})
     config[:headers] ||= {}
     config[:headers]['CONTENT_TYPE'] = 'application/json'
     config[:headers].merge!(auth_for_user(user))
     post(path, config)
+  end
+
+  def get_with_authorization(user, path, config={})
+    config[:headers] ||= {}
+    config[:headers].merge!(auth_for_user(user))
+    config[:headers][:accept] = 'application/json'
+    get(path, config)
   end
 end
