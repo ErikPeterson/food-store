@@ -120,6 +120,12 @@ Users are very basic records, containing only an `id`, `email`, and an encrypted
 
 ### Shortcomings
 
+- No bulk create or update actions
 - Error handling/reporting in the API is very basic
 - In order to add/remove attributes from a type schema, a new type must be created
 - All attributes in schema are required, no mechanism for marking an attribute optional
+- No caching (application-layer caching is trivial to add in Rails but seemed unecessary for this exercise)
+
+## API Docs
+
+Located in `doc/api` for signup, signin, resource creation, and resource deletion. See `spec/requests/*` for documentation of index routes.
