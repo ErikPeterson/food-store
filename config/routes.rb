@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       post '/stock_units' => 'stock_units#create'
       get '/stock_units/:id' => 'stock_units#show'
       post '/stock_units/:id' => 'stock_units#update'
+      delete '/stock_units/:id' => 'stock_units#destroy'
     end
   end
 

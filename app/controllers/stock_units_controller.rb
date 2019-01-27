@@ -33,6 +33,17 @@ class StockUnitsController < ActionController::API
     render json: { error: e.message }, status: 400
   end
 
+  def destroy
+    stock_unit = StockUnit.find(params[:id])
+    if stock_unit.owner_id == current_user.id
+      stock_unit.destroy!
+      render body: nil, status: 204
+    else
+      render body: nil, status: 403
+    end
+  rescue StandardError => e
+    render json: { error: e.message }, status: 400
+  end
 
   def stock_unit_params
     params.require(:stock_unit).permit(

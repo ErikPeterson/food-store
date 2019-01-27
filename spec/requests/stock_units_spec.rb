@@ -182,3 +182,30 @@ RSpec.describe 'POST /api/v1/stock_units/:id', type: :request do
     expect(response_json).to match(expected_json(stock_unit.reload))
   end
 end
+
+RSpec.describe 'DELETE /api/v1/stock_units/#{stock_unit.id}', type: :request do
+  it 'returns a 401 if no user is authenticated' do
+    delete('/api/v1/stock_units/1', params: '{}')
+    expect(response.status).to eq(401)
+  end
+
+  it 'returns a 403 if the authenticated user is not the owner of the stock unit' do
+    owner = create(:user)
+    stock_unit = create(:stock_unit, owner: owner)
+    requester = create(:user)
+
+    delete_with_authorization(requester, "/api/v1/stock_units/#{stock_unit.id}")
+
+    expect(response.status).to eq(403)
+  end
+
+  it 'returns a 204 if the resource was successfully deleted' do
+    owner = create(:user)
+    stock_unit = create(:stock_unit, owner: owner)
+    requester = create(:user)
+
+    delete_with_authorization(owner, "/api/v1/stock_units/#{stock_unit.id}")
+
+    expect(response.status).to eq(204)
+  end
+end

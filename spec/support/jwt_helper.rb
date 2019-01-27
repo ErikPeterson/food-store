@@ -23,4 +23,11 @@ module JWTHelper
     config[:headers][:accept] = 'application/json'
     get(path, config)
   end
+
+  def delete_with_authorization(user, path, config={})
+    config[:headers] ||= {}
+    config[:headers]['CONTENT_TYPE'] = 'application/json'
+    config[:headers].merge!(auth_for_user(user))
+    delete(path, config)
+  end
 end
