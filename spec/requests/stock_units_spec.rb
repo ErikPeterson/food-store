@@ -2,24 +2,24 @@ require 'rails_helper'
 require './spec/support/jwt_helper'
 require './spec/support/request_helper'
 
+def expected_stock_unit_json(stock_unit)
+  {
+    stock_unit: {
+      id: stock_unit.id,
+      owner_id: stock_unit.owner_id,
+      stock_unit_type_name: stock_unit.stock_unit_type_name,
+      expiration_date: stock_unit.expiration_date.as_json,
+      created_at: stock_unit.created_at.as_json,
+      unit_attributes: stock_unit.unit_attributes.with_indifferent_access,
+      description: stock_unit.description,
+      schema: stock_unit.schema.as_json
+    }
+  }
+end
+
 RSpec.configure do |config|
   config.include JWTHelper
   config.include RequestHelper
-
-  def expected_json(stock_unit)
-    {
-      stock_unit: {
-        id: stock_unit.id,
-        owner_id: stock_unit.owner_id,
-        stock_unit_type_name: stock_unit.stock_unit_type_name,
-        expiration_date: stock_unit.expiration_date.as_json,
-        created_at: stock_unit.created_at.as_json,
-        unit_attributes: stock_unit.unit_attributes.with_indifferent_access,
-        description: stock_unit.description,
-        schema: stock_unit.schema.as_json
-      }
-    }
-  end
 end
 
 RSpec.describe 'POST /api/v1/stock_units', type: :request do
@@ -61,7 +61,7 @@ RSpec.describe 'POST /api/v1/stock_units', type: :request do
     post_with_authorization(user, '/api/v1/stock_units', params: body.to_json)
 
     expect(response.status).to eq(200)
-    expect(response_json).to match(expected_json(StockUnit.last))
+    expect(response_json).to match(expected_stock_unit_json(StockUnit.last))
   end
 end
 
@@ -88,7 +88,7 @@ RSpec.describe 'GET /api/v1/stock_units/:id', type: :request do
     get_with_authorization(owner, "/api/v1/stock_units/#{stock_unit.id}")
 
     expect(response.status).to eq(200)
-    expect(response_json).to match(expected_json(stock_unit))
+    expect(response_json).to match(expected_stock_unit_json(stock_unit))
   end
 end
 
@@ -179,7 +179,7 @@ RSpec.describe 'POST /api/v1/stock_units/:id', type: :request do
     post_with_authorization(user, "/api/v1/stock_units/#{stock_unit.id}", params: params.to_json)
 
     expect(response.status).to eq(200)
-    expect(response_json).to match(expected_json(stock_unit.reload))
+    expect(response_json).to match(expected_stock_unit_json(stock_unit.reload))
   end
 end
 
