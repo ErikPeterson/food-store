@@ -20,11 +20,12 @@ RSpec.describe StockUnit, type: :model do
           schema: [
             ['color', 'ListType', 'green', 'red'],
             ['size', 'RangeType', 0, 10],
-            ['Zmanufacturer', 'TextType']
+            ['manufacturer', 'TextType']
         ])
 
         expect do
           create(:stock_unit,
+            stock_unit_type: type,
             description: "Big ol' sack of jelly bellys",
             unit_attributes: {
               'color' => 'green',
