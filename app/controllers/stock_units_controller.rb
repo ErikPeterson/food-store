@@ -21,8 +21,21 @@ class StockUnitsController < ActionController::API
     render body: nil, status: 404
   end
 
+  def update
+    stock_unit = StockUnit.find(params[:id])
+    if stock_unit.owner_id == current_user.id
+      stock_unit.update!(stock_unit_params)
+      render 'stock_units/show.json', locals: { stock_unit: stock_unit }
+    else
+      render body: nil, status: 403
+    end
+  rescue StandardError => e
+    render json: { error: e.message }, status: 400
+  end
+
+
   def stock_unit_params
-    params.permit(
+    params.require(:stock_unit).permit(
       :owner_id,
       :mass_in_grams,
       :expiration_date,
