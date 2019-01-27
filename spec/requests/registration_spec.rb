@@ -24,7 +24,7 @@ RSpec.describe 'POST /signup', type: :request do
 
     it 'returns a new user' do
       [:id, :email, :created_at, :updated_at].each do |key|
-        expect(response_json[key]).to be_present
+        expect(response_json[:user][key]).to be_present
       end
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe 'POST /signup', type: :request do
     end
 
     it 'returns validation errors' do
-      expect(response_json['errors'].first['title']).to eq('Bad Request')
+      expect(response_json['error']).to be_present
     end
   end
 end
