@@ -4,6 +4,6 @@ class SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
-    render json: resource
+    render 'users/show.json.jbuilder', locals: { user: resource }
   end
 end
